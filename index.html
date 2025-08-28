@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Práctica 2 - Temperatura</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            color: #e1e8f0;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: linear-gradient(45deg, #1e3a8a, #3b82f6);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .menu-item {
+            background: linear-gradient(145deg, #1e293b, #334155);
+            border: 2px solid #3b82f6;
+            border-radius: 15px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .menu-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+            border-color: #60a5fa;
+        }
+
+        .menu-item h3 {
+            color: #3b82f6;
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+
+        .menu-item p {
+            color: #94a3b8;
+            font-size: 0.95rem;
+        }
+
+        .content-area {
+            background: linear-gradient(145deg, #1e293b, #334155);
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            display: none;
+        }
+
+        .content-area.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .content-area h2 {
+            color: #3b82f6;
+            margin-bottom: 20px;
+            font-size: 2rem;
+            border-bottom: 2px solid #3b82f6;
+            padding-bottom: 10px;
+        }
+
+        .concept-card {
+            background: linear-gradient(145deg, #0f172a, #1e293b);
+            border-left: 4px solid #3b82f6;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .concept-card h4 {
+            color: #60a5fa;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .thermometer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .thermometer-card {
+            background: linear-gradient(145deg, #0f172a, #1e293b);
+            border: 2px solid #1d4ed8;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .thermometer-card h5 {
+            color: #3b82f6;
+            margin-bottom: 10px;
+        }
+
+        .procedure-step {
+            background: linear-gradient(145deg, #0f172a, #1e293b);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #10b981;
+        }
+
+        .procedure-step strong {
+            color: #34d399;
+        }
+
+        .back-btn {
+            background: linear-gradient(45deg, #3b82f6, #1d4ed8);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+        }
+
+        .quiz-question {
+            background: linear-gradient(145deg, #0f172a, #1e293b);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .quiz-options {
+            margin: 15px 0;
+        }
+
+        .quiz-option {
+            background: linear-gradient(145deg, #1e293b, #334155);
+            border: 2px solid #475569;
+            border-radius: 8px;
+            padding: 10px 15px;
+            margin: 8px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quiz-option:hover {
+            border-color: #3b82f6;
+            transform: translateX(5px);
+        }
+
+        .quiz-option.correct {
+            border-color: #10b981;
+            background: linear-gradient(145deg, #064e3b, #065f46);
+        }
+
+        .quiz-option.incorrect {
+            border-color: #ef4444;
+            background: linear-gradient(145deg, #7f1d1d, #991b1b);
+        }
+
+        .safety-warning {
+            background: linear-gradient(145deg, #7f1d1d, #991b1b);
+            border: 2px solid #ef4444;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+
+        .safety-warning h4 {
+            color: #fca5a5;
+            margin-bottom: 10px;
+        }
+
+        .equipment-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .equipment-item {
+            background: linear-gradient(145deg, #0f172a, #1e293b);
+            border: 1px solid #3b82f6;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌡️ Práctica 2: Temperatura</h1>
+            <p>Laboratorio de Termodinámica - Estudio Interactivo</p>
+        </div>
+
+        <div id="main-menu" class="menu-grid">
+            <div class="menu-item" onclick="showContent('teoria')">
+                <h3>📚 Bases Teóricas</h3>
+                <p>Temperatura, equilibrio térmico, ley cero de la termodinámica y escalas de temperatura</p>
+            </div>
+            
+            <div class="menu-item" onclick="showContent('termometros')">
+                <h3>🔬 Termómetros</h3>
+                <p>Tipos de termómetros, principios de funcionamiento y características</p>
+            </div>
+            
+            <div class="menu-item" onclick="showContent('objetivos')">
+                <h3>🎯 Objetivos</h3>
+                <p>Qué aprenderás en esta práctica y las competencias a desarrollar</p>
+            </div>
+            
+            <div class="menu-item" onclick="showContent('seguridad')">
+                <h3>⚠️ Seguridad</h3>
+                <p>Medidas de seguridad y riesgos a considerar durante el experimento</p>
+            </div>
+            
+            <div class="menu-item" onclick="showContent('equipo')">
+                <h3>🛠️ Equipo y Material</h3>
+                <p>Lista completa del material necesario para realizar la práctica</p>
+            </div>
+            
+            <div class="menu-item" onclick="showContent('procedimiento')">
+                <h3>📋 Procedimiento</h3>
+                <p>Pasos detallados para realizar el experimento correctamente</p>
+            </div>
+            
+            <div class="menu-item" onclick="showContent('analisis')">
+                <h3>📊 Análisis de Resultados</h3>
+                <p>Cómo interpretar los datos y construir las gráficas</p>
+            </div>
+            
+            <div class="menu-item" onclick="showContent('cuestionario')">
+                <h3>❓ Cuestionario</h3>
+                <p>Preguntas para evaluar tu comprensión del tema</p>
+            </div>
+        </div>
+
+        <!-- Contenido Teórico -->
+        <div id="teoria" class="content-area">
+            <button class="back-btn" onclick="showMenu()">← Volver al Menú</button>
+            <h2>📚 Bases Teóricas</h2>
+            
+            <div class="concept-card">
+                <h4>🌡️ ¿Qué es la Temperatura?</h4>
+                <p>La temperatura es una propiedad termodinámica intensiva que está asociada al equilibrio térmico. Es la propiedad que determina cuándo dos o más sistemas que interaccionan entre sí se encuentran en equilibrio térmico.</p>
+                <p><strong>Nota importante:</strong> No es simplemente "qué tan caliente o frío está algo", sino una propiedad fundamental que describe el estado energético de un sistema.</p>
+            </div>
+
+            <div class="concept-card">
+                <h4>⚖️ Equilibrio Térmico</h4>
+                <p>Se presenta cuando dos sistemas a diferentes temperaturas se ponen en contacto:</p>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>El sistema más caliente disminuye su temperatura</li>
+                    <li>El sistema más frío aumenta su temperatura</li>
+                    <li>Ambos llegan a la misma temperatura final</li>
+                    <li>En este punto están en equilibrio térmico</li>
+                </ul>
+            </div>
+
+            <div class="concept-card">
+                <h4>0️⃣ Ley Cero de la Termodinámica</h4>
+                <p><strong>Enunciado:</strong> Si un sistema A está en equilibrio térmico con un sistema B, y el sistema B está en equilibrio térmico con un sistema C, entonces los sistemas A y C también están en equilibrio térmico entre sí.</p>
+                <p><strong>Importancia:</strong> Esta ley es fundamental para poder definir la temperatura y permite el uso de termómetros.</p>
+            </div>
+
+            <div class="concept-card">
+                <h4>📏 Escalas de Temperatura</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 15px;">
+                    <div>
+                        <h5 style="color: #60a5fa;">Escalas Relativas:</h5>
+                        <p><strong>Celsius (°C):</strong> Agua se congela a 0°C, hierve a 100°C</p>
+                        <p><strong>Fahrenheit (°F):</strong> Agua se congela a 32°F, hierve a 212°F</p>
+                    </div>
+                    <div>
+                        <h5 style="color: #60a5fa;">Escalas Absolutas:</h5>
+                        <p><strong>Kelvin (K):</strong> Cero absoluto = 0 K = -273.15°C</p>
+                        <p><strong>Rankine (R):</strong> Cero absoluto = 0 R = -459.67°F</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenido Termómetros -->
+        <div id="termometros" class="content-area">
+            <button class="back-btn" onclick="showMenu()">← Volver al Menú</button>
+            <h2>🔬 Termómetros</h2>
+            
+            <p style="margin-bottom: 20px;">Los termómetros funcionan basándose en propiedades de las sustancias que cambian con la temperatura: longitud, volumen, resistividad eléctrica, etc.</p>
+            
+            <div class="thermometer-grid">
+                <div class="thermometer-card">
+                    <h5>🧪 Termómetro de Bulbo (Alcohol)</h5>
+                    <p><strong>Principio:</strong> Expansión térmica del líquido</p>
+                    <p><strong>Ventajas:</strong> Económico, fácil lectura</p>
+                    <p><strong>Desventajas:</strong> Frágil, respuesta lenta</p>
+                </div>
+                
+                <div class="thermometer-card">
+                    <h5>🔧 Termómetro Bimetálico</h5>
+                    <p><strong>Principio:</strong> Diferentes coeficientes de expansión de dos metales</p>
+                    <p><strong>Ventajas:</strong> Robusto, no requiere energía</p>
+                    <p><strong>Desventajas:</strong> Menos preciso</p>
+                </div>
+                
+                <div class="thermometer-card">
+                    <h5>⚡ Termopar</h5>
+                    <p><strong>Principio:</strong> Efecto termoeléctrico (Seebeck)</p>
+                    <p><strong>Ventajas:</strong> Respuesta rápida, amplio rango</p>
+                    <p><strong>Desventajas:</strong> Requiere calibración</p>
+                </div>
+                
+                <div class="thermometer-card">
+                    <h5>💨 Termómetro de Gas</h5>
+                    <p><strong>Principio:</strong> Ley de gases ideales</p>
+                    <p><strong>Ventajas:</strong> Muy preciso</p>
+                    <p><strong>Desventajas:</strong> Complejo de usar</p>
+                </div>
+                
+                <div class="thermometer-card">
+                    <h5>🌟 Pirómetro de Radiación</h5>
+                    <p><strong>Principio:</strong> Radiación electromagnética</p>
+                    <p><strong>Ventajas:</strong> Sin contacto, altas temperaturas</p>
+                    <p><strong>Desventajas:</strong> Costoso, emisividad variable</p>
+                </div>
+            </div>
+
+            <div class="concept-card">
+                <h4>📊 Características Importantes de los Termómetros</h4>
+                <p><strong>Rango:</strong> Intervalo de temperaturas que puede medir</p>
+                <p><strong>Resolución:</strong> Lectura mínima que se puede obtener</p>
+                <p><strong>Rapidez de respuesta:</strong> Qué tan rápido responde a cambios de temperatura</p>
+                <p><strong>Facilidad de lectura:</strong> Qué tan fácil es leer las mediciones</p>
+            </div>
+        </div>
+
+        <!-- Contenido Objetivos -->
+        <div id="objetivos" class="content-area">
+            <button class="back-btn" onclick="showMenu()">← Volver al Menú</button>
+            <h2>🎯 Objetivos de la Práctica</h2>
+            
+            <div class="concept-card">
+                <h4>🎯 Objetivo General</h4>
+                <p>Comprender el fundamento termodinámico de la medición de la temperatura mediante el uso de diferentes tipos de termómetros.</p>
+            </div>
+
+            <div class="concept-card">
+                <h4>📝 Objetivos Específicos</h4>
+                <ul style="margin-left: 20px;">
+                    <li><strong>Construir</strong> la curva de calentamiento del agua</li>
+                    <li><strong>Comparar</strong> el desempeño de tres termómetros diferentes</li>
+                    <li><strong>Determinar</strong> para cada termómetro:
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li>Rapidez de respuesta (sensibilidad)</li>
+                            <li>Facilidad de lectura</li>
+                            <li>Rango de medición</li>
+                            <li>Resolución</li>
+                        </ul>
+                    </li>
+                    <li><strong>Analizar</strong> el comportamiento térmico del agua durante el calentamiento</li>
+                </ul>
+            </div>
+
+            <div class="concept-card">
+                <h4>🧠 Competencias a Desarrollar</h4>
+                <p><strong>Conocimientos:</strong> Principios de termometría, escalas de temperatura, propiedades térmicas</p>
+                <p><strong>Habilidades:</strong> Manejo de instrumentos de medición, análisis de datos, interpretación gráfica</p>
+                <p><strong>Actitudes:</strong> Precisión en mediciones, trabajo en equipo, seguridad en el laboratorio</p>
+            </div>
+        </div>
+
+        <!-- Contenido Seguridad -->
+        <div id="seguridad" class="content-area">
+            <button class="back-btn" onclick="showMenu()">← Volver al Menú</button>
+            <h2>⚠️ Seguridad en el Laboratorio</h2>
+            
+            <div class="safety-warning">
+                <h4>🚨 IMPORTANTE: Lee cuidadosamente antes de iniciar</h4>
+                <p>La seguridad es lo más importante en el laboratorio. Sigue todas las medidas de seguridad para evitar accidentes.</p>
+            </div>
+
+            <div class="concept-card">
+                <h4>🌡️ Termómetro de Inmersión (Alcohol)</h4>
+                <p><strong>Riesgo:</strong> El bulbo puede romperse liberando alcohol</p>
+                <p><strong>Precauciones:</strong></p>
+                <ul style="margin-left: 20px;">
+                    <li>Manejar con cuidado extremo</li>
+                    <li>Evitar golpes y caídas</li>
+                    <li>Si se rompe, ventilar el área y limpiar inmediatamente</li>
+                    <li>No tocar fragmentos de vidrio con las manos</li>
+                </ul>
+            </div>
+
+            <div class="concept-card">
+                <h4>🥃 Vasos de Precipitados</h4>
+                <p><strong>Riesgo:</strong> Pueden romperse durante su uso</p>
+                <p><strong>Precauciones:</strong></p>
+                <ul style="margin-left: 20px;">
+                    <li>Verificar que no tengan grietas antes de usar</li>
+                    <li>Manejar con pinzas cuando estén calientes</li>
+                    <li>Colocar sobre superficies estables</li>
+                    <li>Usar material de vidrio templado</li>
+                </ul>
+            </div>
+
+            <div class="concept-card">
+                <h4>🔥 Parrilla Eléctrica</h4>
+                <p><strong>Riesgo:</strong> Quemaduras por calentamiento</p>
+                <p><strong>Precauciones:</strong></p>
+                <ul style="margin-left: 20px;">
+                    <li>No tocar la superficie caliente</li>
+                    <li>Usar guantes térmicos si es necesario</li>
+                    <li>Mantener el área de trabajo libre de materiales inflamables</li>
+                    <li>Apagar completamente después de usar</li>
+                    <li>Esperar a que se enfríe antes de guardar</li>
+                </ul>
+            </div>
+
+            <div class="safety-warning">
+                <h4>📋 Lista de Verificación de Seguridad</h4>
+                <p>Antes de iniciar, asegúrate de:</p>
+                <ul style="margin-left: 20px;">
+                    <li>✓ Conocer la ubicación del botiquín de primeros auxilios</li>
+                    <li>✓ Usar bata de laboratorio</li>
+                    <li>✓ Tener lentes de seguridad</li>
+                    <li>✓ Verificar que el equipo esté en buen estado</li>
+                    <li>✓ Conocer el procedimiento de evacuación</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Contenido Equipo -->
+        <div id="equipo" class="content-area">
+            <button class="back-btn" onclick="showMenu()">← Volver al Menú</button>
+            <h2>🛠️ Equipo y Material</h2>
+            
+            <div class="equipment-list">
+                <div class="equipment-item">
+                    <h5>🌡️ Termómetro de Bulbo</h5>
+                    <p>Con alcohol para medición de temperatura</p>
+                </div>
+                
+                <div class="equipment-item">
+                    <h5>⚡ Termopar</h5>
+                    <p>Cromel-Alumel (color amarillo)</p>
+                </div>
+                
+                <div class="equipment-item">
+                    <h5>🔧 Termómetro Bimetálico</h5>
+                    <p>Para medición mecánica</p>
+                </div>
+                
+                <div class="equipment-item">
+                    <h5>🥃 Vaso de Precipitados</h5>
+                    <p>250 ml con mezcla hielo-agua</p>
+                </div>
+                
+                <div class="equipment-item">
+                    <h5>🔥 Parrilla Eléctrica</h5>
+                    <p>Para calentamiento controlado</p>
+                </div>
+                
+                <div class="equipment-item">
+                    <h5>🔧 Soporte Universal</h5>
+                    <p>Para sostener el equipo</p>
+                </div>
+                
+                <div class="equipment-item">
+                    <h5>🤏 Pinzas</h5>
+                    <p>Tres dedos, tubo ensayo, termómetro</p>
+                </div>
+                
+                <div class="equipment-item">
+                    <h5>⏱️ Cronómetro</h5>
+                    <p>Para medición precisa del tiempo</p>
+                </div>
+                
+                <div class="equipment-item">
+                    <h5>🌪️ Agitador Magnético</h5>
+                    <p>Para homogenizar la temperatura</p>
+                </div>
+                
+                <div class="equipment-item">
+                    <h5>📱 Multímetro Digital</h5>
+                    <p>Para leer el termopar</p>
+                </div>
+            </div>
+
+            <div class="concept-card">
+                <h4>📝 Preparación del Material</h4>
+                <p><strong>Antes de iniciar:</strong></p>
+                <ul style="margin-left: 20px;">
+                    <li>Verificar que todos los termómetros funcionen correctamente</li>
+                    <li>Preparar la mezcla de hielo y agua líquida</li>
+                    <li>Calibrar el multímetro para lectura del termopar</li>
+                    <li>Ensamblar el soporte con las pinzas</li>
+                    <li>Verificar el funcionamiento de la parrilla eléctrica</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Contenido Procedimiento -->
+        <div id="procedimiento" class="content-area">
+            <button class="back-btn" onclick="showMenu()">← Volver al Menú</button>
+            <h2>📋 Procedimiento Experimental</h2>
+            
+            <div class="procedure-step">
+                <p><strong>Paso 1:</strong> Ensamblar el equipo según el diagrama, asegurándose de que los termómetros estén lo más juntos posible sin tocarse entre sí ni tocar el recipiente.</p>
+            </div>
+
+            <div class="procedure-step">
+                <p><strong>Paso 2:</strong> Verificar que el termopar no toque la parrilla ni las paredes del vaso, y que las puntas de todos los termómetros estén al mismo nivel.</p>
+            </div>
+
+            <div class="procedure-step">
+                <p><strong>Paso 3:</strong> Tomar las lecturas iniciales de temperatura en cada termómetro y registrarlas como tiempo cero.</p>
+            </div>
+
+            <div class="procedure-step">
+                <p><strong>Paso 4:</strong> Encender la parrilla a su máximo nivel de calentamiento con agitación media para asegurar uniformidad térmica.</p>
+            </div>
+
+            <div class="procedure-step">
+                <p><strong>Paso 5:</strong> Registrar las lecturas de temperatura cada 30 segundos (0.5 min) en todos los termómetros hasta que el agua hierva.</p>
+            </div>
+
+            <div class="procedure-step">
+                <p><strong>Paso 6:</strong> Una vez que el agua hierve, tomar 5 lecturas adicionales para observar el comportamiento durante la ebullición.</p>
+            </div>
+
+            <div class="procedure-step">
+                <p><strong>Paso 7:</strong> Apagar la parrilla y retirarla con cuidado. Registrar todas las mediciones en la tabla de datos.</p>
+            </div>
+
+            <div class="concept-card">
+                <h4>💡 Consejos Importantes</h4>
+                <ul style="margin-left: 20px;">
+                    <li><strong>Sincronización:</strong> Usar el cronómetro para tomar lecturas exactamente cada 30 segundos</li>
+                    <li><strong>Agitación:</strong> Mantener agitación constante para temperatura uniforme</li>
+                    <li><strong>Lectura:</strong> Leer los termómetros al nivel de los ojos para evitar errores de paralaje</li>
+                    <li><strong>Registro:</strong> Anotar inmediatamente cada medición para evitar olvidos</li>
+                </ul>
+            </div>
+
+            <div class="safety-warning">
+                <h4>⚠️ Durante el Experimento</h4>
+                <p>Mantén siempre las precauciones de seguridad. Si observas algo anormal (humo, olores, sonidos extraños), apaga inmediatamente el equipo y consulta al instructor.</p>
+            </div>
+        </div>
+
+        <!-- Contenido Análisis -->
+        <div id="analisis" class="content-area">
+            <button class="back-btn" onclick="showMenu()">← Volver al Menú</button>
+            <h2>📊 Análisis de Resultados</h2>
+            
+            <div class="concept-card">
+                <h4>📈 Construcción de Gráficas</h4>
+                <p><strong>Gráfica Principal:</strong> Temperatura vs. Tiempo</p>
+                <ul style="margin-left: 20px;">
+                    <li>Eje X: Tiempo [min]</li>
+                    <li>Eje Y: Temperatura [°C]</li>
+                    <li>Tres curvas diferentes (una por cada termómetro)</li>
+                    <li>Incluir diagrama de dispersión con puntos experimentales</li>
+                    <li>Agregar curvas de ajuste suavizadas</li>
+                </ul>
+            </div>
+
+            <div class="concept-card">
+                <h4>🔍 Características a Determinar</h4>
+                <p><strong>1. Rango:</strong></p>
+                <ul style="margin-left: 20px;">
+                    <li>Intervalo completo que puede medir cada termómetro</li>
+                    <li>Para el termopar, consultar especificaciones del fabricante</li>
+                </ul>
+                
+                <p><strong>2. Resolución:</strong></p>
+                <ul style="margin-left: 20px;">
+                    <li>Lectura mínima observable en cada instrumento</li>
+                    <li>Generalmente la división más pequeña de la escala</li>
+                </ul>
+                
+                <p><strong>3. Rapidez de Respuesta:</strong></p>
+                <ul style="margin-left: 20px;">
+                    <li>Se calcula como la pendiente de las curvas de ajuste</li>
+                    <li>Indica qué tan rápido responde cada termómetro</li>
+                    <li>Mayor pendiente = respuesta más rápida</li>
+                </ul>
+                
+                <p><strong>4. Facilidad de Lectura:</strong></p>
+                <ul style="margin-left: 20px;">
+                    <li>Evaluación subjetiva del experimentador</li>
+                    <li>Considerar: claridad de números, tamaño de escala, iluminación requerida</li>
+                </ul>
+            </div>
+
+            <div class="concept-card">
+                <h4>📉 Interpretación de la Curva de Calentamiento</h4>
+                <p><strong>Fases esperadas:</strong></p>
+                <ul style="margin-left: 20px;">
+                    <li><strong>Fase 1:</strong> Calentamiento inicial (curva ascendente)</li>
+                    <li><strong>Fase 2:</strong> Calentamiento lineal (pendiente constante)</li>
+                    <li><strong>Fase 3:</strong> Aproximación a ebullición (curva se aplana)</li>
+                    <li><strong>Fase 4:</strong> Ebullición (temperatura constante ~100°C)</li>
+                </ul>
+            </div>
+
+            <div class="concept-card">
+                <h4>🎯 Errores de Calibración</h4>
+                <p>La ordenada al origen de las curvas de ajuste representa el error de calibración de cada termómetro. Un termómetro perfectamente calibrado debería tener ordenada al origen igual a la temperatura inicial real.</p>
+            </div>
+        </div>
+
+        <!-- Contenido Cuestionario -->
+        <div id="cuestionario" class="content-area">
+            <button class="back-btn" onclick="showMenu()">← Volver al Menú</button>
+            <h2>❓ Cuestionario Interactivo</h2>
+            
+            <div class="quiz-question">
+                <h4>1. ¿Qué establece la Ley Cero de la Termodinámica?</h4>
+                <div class="quiz-options">
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">Si A = B y B = C, entonces A ≠ C</div>
+                    <div class="quiz-option" onclick="checkAnswer(this, true)">Si A está en equilibrio térmico con B, y B con C, entonces A está en equilibrio térmico con C</div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">La temperatura siempre aumenta con el tiempo</div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">El calor fluye de frío a caliente</div>
+                </div>
+            </div>
+
+            <div class="quiz-question">
+                <h4>2. ¿Cuáles son las escalas de temperatura absoluta?</h4>
+                <div class="quiz-options">
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">Celsius y Fahrenheit</div>
+                    <div class="quiz-option" onclick="checkAnswer(this, true)">Kelvin y Rankine</div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">Celsius y Kelvin</div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">Fahrenheit y Rankine</div>
+                </div>
+            </div>
+
+            <div class="quiz-question">
+                <h4>3. ¿Qué principio utiliza un termómetro bimetálico?</h4>
+                <div class="quiz-options">
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">Expansión de líquidos</div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">Efecto termoeléctrico</div>
+                    <div class="quiz-option" onclick="checkAnswer(this, true)">Diferentes coeficientes de expansión térmica de dos metales</div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">Radiación electromagnética</div>
+                </div>
+            </div>
+
+            <div class="quiz-question">
+                <h4>4. Durante la ebullición del agua, ¿qué sucede con la temperatura?</h4>
+                <div class="quiz-options">
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">Continúa aumentando linealmente</div>
+                    <div class="quiz-option" onclick="checkAnswer(this, true)">Se mantiene constante aproximadamente a 100°C</div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">Disminuye gradualmente</div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">Fluctúa aleatoriamente</div>
+                </div>
+            </div>
+
+            <div class="quiz-question">
+                <h4>5. ¿Qué es la resolución de un termómetro?</h4>
+                <div class="quiz-options">
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">El rango máximo que puede medir</div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">La velocidad de respuesta</div>
+                    <div class="quiz-option" onclick="checkAnswer(this, true)">La lectura mínima que se puede obtener</div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)">La precisión del instrumento</div>
+                </div>
+            </div>
+
+            <div class="concept-card">
+                <h4>📚 Preguntas del Cuestionario Previo (Para Estudio)</h4>
+                <details style="margin: 10px 0;">
+                    <summary style="cursor: pointer; color: #60a5fa; font-weight: bold;">1. Definiciones de Equilibrio</summary>
+                    <div style="padding: 10px; margin-top: 10px; background: #0f172a; border-radius: 5px;">
+                        <p><strong>Equilibrio:</strong> Estado en el que las propiedades macroscópicas de un sistema no cambian con el tiempo.</p>
+                        <p><strong>Equilibrio Térmico:</strong> Estado donde dos sistemas tienen la misma temperatura y no hay transferencia neta de calor.</p>
+                        <p><strong>Equilibrio Termodinámico:</strong> Estado donde no hay cambios en propiedades termodinámicas (térmico, mecánico, químico).</p>
+                    </div>
+                </details>
+
+                <details style="margin: 10px 0;">
+                    <summary style="cursor: pointer; color: #60a5fa; font-weight: bold;">2. Escalas de Temperatura</summary>
+                    <div style="padding: 10px; margin-top: 10px; background: #0f172a; border-radius: 5px;">
+                        <p><strong>Absolutas:</strong> Kelvin (SI) y Rankine (Inglés)</p>
+                        <p><strong>Relativas:</strong> Celsius (SI) y Fahrenheit (Inglés)</p>
+                    </div>
+                </details>
+
+                <details style="margin: 10px 0;">
+                    <summary style="cursor: pointer; color: #60a5fa; font-weight: bold;">3. Propiedades Termométricas</summary>
+                    <div style="padding: 10px; margin-top: 10px; background: #0f172a; border-radius: 5px;">
+                        <p>Longitud, volumen, presión, resistencia eléctrica, color de radiación, potencial eléctrico.</p>
+                    </div>
+                </details>
+
+                <details style="margin: 10px 0;">
+                    <summary style="cursor: pointer; color: #60a5fa; font-weight: bold;">4. Puntos de Ebullición y Fusión del Agua</summary>
+                    <div style="padding: 10px; margin-top: 10px; background: #0f172a; border-radius: 5px;">
+                        <p><strong>Nivel del mar:</strong> Fusión: 0°C, Ebullición: 100°C</p>
+                        <p><strong>Ciudad de México (2240m altitud):</strong> Fusión: 0°C, Ebullición: ~93°C</p>
+                    </div>
+                </details>
+
+                <details style="margin: 10px 0;">
+                    <summary style="cursor: pointer; color: #60a5fa; font-weight: bold;">5. Cero Absoluto</summary>
+                    <div style="padding: 10px; margin-top: 10px; background: #0f172a; border-radius: 5px;">
+                        <p>Temperatura teórica más baja posible: 0 K = -273.15°C. En esta temperatura, el movimiento molecular se minimiza teóricamente.</p>
+                    </div>
+                </details>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showContent(contentId) {
+            // Ocultar el menú principal
+            document.getElementById('main-menu').style.display = 'none';
+            
+            // Ocultar todas las áreas de contenido
+            const contentAreas = document.querySelectorAll('.content-area');
+            contentAreas.forEach(area => {
+                area.classList.remove('active');
+            });
+            
+            // Mostrar el contenido seleccionado
+            document.getElementById(contentId).classList.add('active');
+        }
+
+        function showMenu() {
+            // Ocultar todas las áreas de contenido
+            const contentAreas = document.querySelectorAll('.content-area');
+            contentAreas.forEach(area => {
+                area.classList.remove('active');
+            });
+            
+            // Mostrar el menú principal
+            document.getElementById('main-menu').style.display = 'grid';
+        }
+
+        function checkAnswer(element, isCorrect) {
+            // Remover clases anteriores de todas las opciones
+            const options = element.parentElement.children;
+            for (let option of options) {
+                option.classList.remove('correct', 'incorrect');
+            }
+            
+            // Marcar la respuesta seleccionada
+            if (isCorrect) {
+                element.classList.add('correct');
+                setTimeout(() => {
+                    alert('¡Correcto! 🎉');
+                }, 100);
+            } else {
+                element.classList.add('incorrect');
+                // Mostrar también la respuesta correcta
+                for (let option of options) {
+                    if (option.onclick.toString().includes('true')) {
+                        option.classList.add('correct');
+                        break;
+                    }
+                }
+                setTimeout(() => {
+                    alert('Incorrecto. La respuesta correcta se muestra en verde.');
+                }, 100);
+            }
+        }
+
+        // Agregar efectos de sonido (opcional)
+        function playClickSound() {
+            // Se puede implementar un sonido de clic si se desea
+        }
+
+        // Agregar animaciones suaves al cambiar contenido
+        document.addEventListener('DOMContentLoaded', function() {
+            // Código para inicialización si es necesario
+            console.log('Menú interactivo de Temperatura cargado exitosamente');
+        });
+    </script>
+</body>
+</html>
